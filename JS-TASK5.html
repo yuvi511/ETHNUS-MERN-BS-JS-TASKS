@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Form Validation</title>
+    <style>
+        /* Add some margin to the form elements for spacing */
+        div {
+            margin-top: 1em;
+        }
+
+        input.invalid, textarea.invalid {
+            border: 2px solid red;
+        }
+
+        input.valid, textarea.valid {
+            border: 2px solid green;
+        }
+
+        .error {
+            display: none;
+            color: red;
+            margin-left: 10px;
+        }
+
+        .error_show {
+            color: red;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Contact Form Validation</h1>
+
+<form id="contact" method="post" action="">
+    <!-- Name -->
+    <div>
+        <label for="contact_name">Name:</label>
+        <input type="text" id="contact_name" name="name">
+        <span class="error">This field is required</span>
+    </div>
+    <!-- Email -->
+    <div>
+        <label for="contact_email">Email:</label>
+        <input type="email" id="contact_email" name="email">
+        <span class="error">A valid email address is required</span>
+    </div>
+    <!-- Website -->
+    <div>
+        <label for="contact_website">Website:</label>
+        <input type="url" id="contact_website" name="website">
+        <span class="error">A valid URL is required</span>
+    </div>
+    <!-- Message -->
+    <div>
+        <label for="contact_message">Message:</label>
+        <textarea id="contact_message" name="message"></textarea>
+        <span class="error">This field is required</span>
+    </div>
+    <!-- Submit Button -->
+    <div id="contact_submit">
+        <button type="submit">Submit</button>
+    </div>
+</form>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        let nameInput = document.getElementById("contact_name");
+        let emailInput = document.getElementById("contact_email");
+        let websiteInput = document.getElementById("contact_website");
+        let messageInput = document.getElementById("contact_message");
+        let form = document.getElementById("contact");
+
+        nameInput.addEventListener("input", function () {
+            validateInput(nameInput, nameInput.value !== "");
+        });
+
+        emailInput.addEventListener("input", function () {
+            validateInput(emailInput, validateEmail(emailInput.value));
+        });
+
+        websiteInput.addEventListener("input", function () {
+            validateInput(websiteInput, validateUrl(websiteInput.value));
+        });
+
+        messageInput.addEventListener("input", function () {
+            validateInput(messageInput, messageInput.value !== "");
+        });
+
+        form.addEventListener("submit", function (event) {
+            if (!validateForm()) {
+                event.preventDefault();
+            } else {
+                alert('No errors: Form will be submitted');
+            }
+        });
+
+        function validateInput(input, isValid) {
+            let errorSpan = input.nextElementSibling;
+            if (isValid) {
+                input.classList.remove("invalid");
+                input.classList.add("valid");
+                errorSpan.style.display = "none";
+            } else {
+                input.classList.remove("valid");
+                input.classList.add("invalid");
+                errorSpan.style.display = "inline";
+            }
+        }
+
+        function validateEmail(email) {
+            let re = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+            return re.test(email);
+        }
+
+        function validateUrl(url) {
+            if (url.substring(0, 4) === 'www.') {
+                url = 'http://www.' + url.substring(4);
+            }
+            let re = /(http|ftp|https):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])?/;
+            return re.test(url);
+        }
+
+        function validateForm() {
+            let inputs = form.querySelectorAll("input[type='text'], input[type='email'], input[type='url'], textarea");
+            let isFormValid = true;
+
+            inputs.forEach(function (input) {
+                let valid = input.classList.contains("valid");
+                if (!valid) {
+                    isFormValid = false;
+                    input.classList.add("invalid");
+                    input.nextElementSibling.style.display = "inline";
+                }
+            });
+
+            return isFormValid;
+        }
+    });
+</script>
+</body>
+</html>
